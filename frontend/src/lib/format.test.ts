@@ -1,12 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  formatMoney,
-  formatPercent,
-  formatPrice,
-  formatQuantity,
-  formatSignedMoney,
-  toneClass,
-} from "./format";
+import { formatMoney, formatPercent, formatPrice, formatQuantity, formatSignedMoney, moneyAxisFormatter, toneClass } from "./format";
 
 describe("money formatting", () => {
   it("formats positive and zero amounts with two decimals", () => {
@@ -51,3 +44,24 @@ describe("toneClass", () => {
     expect(toneClass(null)).toBe("text-ink-muted");
   });
 });
+
+describe("moneyAxisFormatter", () => {
+  it("keeps compact labels when the axis spans a wide range", () => {
+    const format = moneyAxisFormatter(50_000);
+    expect(format(10_000)).toBe("$10K");
+    expect(format(60_000)).toBe("$60K");
+  });
+
+  it("shows whole dollars when the span is hundreds", () => {
+    const format = moneyAxisFormatter(400);
+    expect(format(10_000.38)).toBe("$10,000");
+    expect(format(10_400.12)).toBe("$10,400");
+  });
+
+  it("shows cents when the span is a few dollars, so ticks stay distinct", () => {
+    const format = moneyAxisFormatter(0.44);
+    const ticks = [9999.94, 10000.16, 10000.38].map(format);
+    expect(ticks).toEqual(["$9,999.94", "$10,000.16", "$10,000.38"]);
+    expect(new Set(ticks).size).toBe(ticks.length);
+  });
+})

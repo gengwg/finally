@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { Panel } from "./Panel";
-import { formatClock, formatCompactMoney, formatMoney } from "@/lib/format";
+import { formatClock, formatMoney, moneyAxisFormatter } from "@/lib/format";
 import type { Snapshot } from "@/lib/types";
 
 const AXIS = { stroke: "#5f6b78", fontSize: 10, fontFamily: "var(--font-mono)" };
@@ -26,6 +26,10 @@ export function PnlChart({
     label: formatClock(snapshot.recorded_at),
     value: snapshot.total_value,
   }));
+
+  const values = data.map((point) => point.value);
+  const span = values.length ? Math.max(...values) - Math.min(...values) : 0;
+  const formatTick = moneyAxisFormatter(span);
 
   return (
     <Panel title="Portfolio value" bodyClassName="p-2" className={className}>
@@ -48,9 +52,9 @@ export function PnlChart({
               <YAxis
                 orientation="right"
                 domain={["dataMin", "dataMax"]}
-                tickFormatter={formatCompactMoney}
+                tickFormatter={formatTick}
                 tick={AXIS}
-                width={56}
+                width={span >= 10_000 ? 56 : 76}
                 tickLine={false}
                 axisLine={false}
               />

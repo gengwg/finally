@@ -3,6 +3,8 @@ const money = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
 });
 
+const whole = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+
 const compact = new Intl.NumberFormat("en-US", {
   notation: "compact",
   maximumFractionDigits: 1,
@@ -37,6 +39,18 @@ export function formatQuantity(value: number): string {
 
 export function formatCompactMoney(value: number): string {
   return `$${compact.format(value)}`;
+}
+
+/**
+ * Tick formatter for a money axis. A compact label collapses to the same
+ * string on every tick when the axis spans only a few dollars — a portfolio
+ * sitting at $10,000.38 would show "$10K" five times — so the precision
+ * widens as the span narrows.
+ */
+export function moneyAxisFormatter(span: number): (value: number) => string {
+  if (span >= 10_000) return formatCompactMoney;
+  if (span >= 10) return (value) => `$${whole.format(value)}`;
+  return (value) => `$${money.format(value)}`;
 }
 
 export function formatClock(iso: string): string {
