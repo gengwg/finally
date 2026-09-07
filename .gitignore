@@ -205,3 +205,24 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Node / Next.js
+node_modules/
+.next/
+frontend/out/
+backend/static/
+next-env.d.ts
+*.tsbuildinfo
+
+# Playwright
+test/test-results/
+test/playwright-report/
+test/.playwright/
+
+# SQLite runtime database
+db/*.db
+db/*.db-journal
+db/*.db-wal
+
+# The Python template above ignores lib/ and build/ globally; keep frontend sources tracked
+!frontend/src/lib/

@@ -1,0 +1,27 @@
+.git
+.github
+.claude
+planning
+test
+
+# ** is required: bare patterns only match at the context root
+**/node_modules
+**/.next
+**/out
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.ruff_cache
+**/.mypy_cache
+**/.coverage
+**/htmlcov
+
+backend/static
+db/*.db
+db/*.db-journal
+db/*.db-wal
+
+.env
+Dockerfile
+docker-compose.yml

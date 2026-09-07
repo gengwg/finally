@@ -1,0 +1,48 @@
+# E2E stack: the production image plus a Playwright runner.
+#   docker compose -f test/docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from playwright
+name: finally-e2e
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    environment:
+      LLM_MOCK: "true"
+      OPENROUTER_API_KEY: ""
+      MASSIVE_API_KEY: ""
+    # Fresh, empty database every run - never the developer's finally-data volume.
+    # mode=1777 so the unprivileged app user can create finally.db.
+    tmpfs:
+      - /app/db:mode=1777
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health').read()"]
+      interval: 2s
+      timeout: 5s
+      start_period: 5s
+      retries: 30
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.63.0-noble
+    depends_on:
+      app:
+        condition: service_healthy
+    # Share the app's network namespace so the browser navigates to localhost. Chrome
+    # auto-upgrades http:// to https:// for a single-label host like "app", but never for
+    # localhost, and page.goto would otherwise fail the TLS handshake against the plain
+    # HTTP port.
+    network_mode: "service:app"
+    # Run as the host user so test-results/ and playwright-report/ land in the working
+    # tree owned by whoever ran the suite, not root. Override with E2E_UID/E2E_GID.
+    user: "${E2E_UID:-1000}:${E2E_GID:-1000}"
+    working_dir: /e2e
+    environment:
+      E2E_BASE_URL: http://localhost:8000
+      CI: "true"
+      # That user has no home directory in this image.
+      HOME: /tmp
+      npm_config_cache: /tmp/.npm
+    volumes:
+      - ./:/e2e
+    command: >
+      sh -c "npm ci --no-audit --no-fund && npx playwright test"

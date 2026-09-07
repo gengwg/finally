@@ -57,6 +57,28 @@ finally/
 └── scripts/     # Start/stop helpers
 ```
 
+## Development
+
+Start and stop the container with the helper scripts instead of raw Docker:
+
+```bash
+./scripts/start_mac.sh          # add --build to rebuild the image
+./scripts/stop_mac.sh           # keeps the finally-data volume
+```
+
+Run the test suites:
+
+```bash
+cd backend && uv run --extra dev pytest         # 299 unit tests
+cd frontend && npm test                         # 60 component tests
+docker compose -f test/docker-compose.test.yml up --build \
+  --abort-on-container-exit --exit-code-from playwright     # Playwright E2E
+```
+
+Local dev without Docker: run `uv run uvicorn app.main:app --reload` in `backend/`
+and `npm run dev` in `frontend/` (port 3000, pointed at the backend by
+`frontend/.env.development`).
+
 ## License
 
 See [LICENSE](LICENSE).

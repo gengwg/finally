@@ -1,0 +1,17 @@
+services:
+  finally:
+    build: .
+    image: finally
+    container_name: finally
+    ports:
+      - "8000:8000"
+    env_file: .env
+    volumes:
+      - finally-data:/app/db
+    restart: unless-stopped
+
+volumes:
+  # Pinned so compose and scripts/start_* share one volume (compose would
+  # otherwise prefix it with the project name)
+  finally-data:
+    name: finally-data
