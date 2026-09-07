@@ -2,7 +2,8 @@
 
 A visually stunning AI-powered trading workstation that streams live market data, simulates portfolio trading, and integrates an LLM chat assistant that can analyze positions and execute trades via natural language.
 
-Built entirely by coding agents as a capstone project for an agentic AI coding course.
+Built entirely by coding agents as the capstone project for Ed Donner's agentic AI
+coding course. Upstream: [ed-donner/finally](https://github.com/ed-donner/finally).
 
 ## Features
 
