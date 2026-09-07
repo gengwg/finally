@@ -60,7 +60,8 @@ finally/
 
 ## Development
 
-Start and stop the container with the helper scripts instead of raw Docker:
+Start and stop the container with the helper scripts instead of raw Docker
+(the `_mac` scripts run on Linux too; `_windows` are the PowerShell equivalents):
 
 ```bash
 ./scripts/start_mac.sh          # add --build to rebuild the image
@@ -71,7 +72,7 @@ Run the test suites:
 
 ```bash
 cd backend && uv run --extra dev pytest         # 299 unit tests
-cd frontend && npm test                         # 60 component tests
+cd frontend && npm test                         # 64 component tests
 docker compose -f test/docker-compose.test.yml up --build \
   --abort-on-container-exit --exit-code-from playwright     # Playwright E2E
 ```
